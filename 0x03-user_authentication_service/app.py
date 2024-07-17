@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""A simple Flask app with user authentication features."""
+"""basic flask app with auth features."""
 from flask import Flask, jsonify, request, abort, redirect
 
 from auth import Auth
@@ -11,7 +11,7 @@ AUTH = Auth()
 
 @app.route("/", methods=["GET"], strict_slashes=False)
 def index() -> str:
-    """GET /, Return:- The home page's payload."""
+    """GET /, Return: home page."""
     return jsonify(
             {"message": "Bienvenue"}
             )
@@ -19,7 +19,7 @@ def index() -> str:
 
 @app.route("/users", methods=["POST"], strict_slashes=False)
 def users() -> str:
-    """POST /users, Return:- The account creation payload."""
+    """POST /users, Return: account created payload."""
     email, password = request.form.get("email"), request.form.get("password")
     try:
         AUTH.register_user(email, password)
@@ -34,7 +34,7 @@ def users() -> str:
 
 @app.route("/sessions", methods=["POST"], strict_slashes=False)
 def login() -> str:
-    """POST /sessions, Return:- The account login payload."""
+    """POST /sessions, Return: account login payload."""
     email, password = request.form.get("email"), request.form.get("password")
     if not AUTH.valid_login(email, password):
         abort(401)
@@ -48,7 +48,7 @@ def login() -> str:
 
 @app.route("/sessions", methods=["DELETE"], strict_slashes=False)
 def logout() -> str:
-    """DELETE /sessions, Return:- Redirects to home route."""
+    """DELETE /sessions, Return: Redirects."""
     session_id = request.cookies.get("session_id")
     user = AUTH.get_user_from_session_id(session_id)
     if user is None:
@@ -59,7 +59,7 @@ def logout() -> str:
 
 @app.route("/profile", methods=["GET"], strict_slashes=False)
 def profile() -> str:
-    """GET /profile, Return:- The user's profile information."""
+    """GET /profile, Return: user's profile details."""
     session_id = request.cookies.get("session_id")
     user = AUTH.get_user_from_session_id(session_id)
     if user is None:
@@ -71,7 +71,7 @@ def profile() -> str:
 
 @app.route("/reset_password", methods=["POST"], strict_slashes=False)
 def get_reset_password_token() -> str:
-    """POST /reset_password, Return:- The user's password reset payload."""
+    """POST /reset_password, Return: user's password to reset payload."""
     email = request.form.get("email")
     reset_token = None
     try:
@@ -87,7 +87,7 @@ def get_reset_password_token() -> str:
 
 @app.route("/reset_password", methods=["PUT"], strict_slashes=False)
 def update_password() -> str:
-    """PUT /reset_password, Return:- The user's password updated payload."""
+    """PUT /reset_password, Return: user's password to updated payload."""
     email = request.form.get("email")
     reset_token = request.form.get("reset_token")
     new_password = request.form.get("new_password")
